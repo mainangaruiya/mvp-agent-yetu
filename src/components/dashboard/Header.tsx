@@ -1,6 +1,16 @@
-import { Bell, Search } from 'lucide-react';
+import { Bell, Search, User } from 'lucide-react';
 import { Button } from '../ui/Button';
 import type { HeaderProps } from '../../types/dashboard.types';
+
+/** Derives a two-letter monogram from a display name, e.g. "Ada Lovelace" -> "AL". */
+function initials(name: string): string {
+  return name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase() ?? '')
+    .join('');
+}
 
 /**
  * Top header bar — ported 1:1 from the original markup: 64px tall, pill
@@ -46,17 +56,37 @@ export function Header({
           <Bell className="w-5 h-5" />
         </Button>
 
-        {/* Instructor profile details */}
+        {/* Instructor profile details — placeholder until the profile loads */}
         <div className="flex items-center gap-2.5 pl-2 border-l border-slate-200">
-          <img
-            alt={profile.name}
-            className="w-8 h-8 rounded-full object-cover ring-1 ring-slate-200"
-            src={profile.avatarUrl}
-          />
-          <div className="text-left leading-tight hidden sm:block">
-            <div className="text-xs font-bold text-slate-900">{profile.name}</div>
-            <div className="text-[11px] text-slate-500 font-medium">{profile.role}</div>
-          </div>
+          {profile ? (
+            <>
+              {profile.avatarUrl ? (
+                <img
+                  alt={profile.name}
+                  className="w-8 h-8 rounded-full object-cover ring-1 ring-slate-200"
+                  src={profile.avatarUrl}
+                />
+              ) : (
+                <span className="w-8 h-8 rounded-full bg-blue-50 text-brand-blue ring-1 ring-slate-200 flex items-center justify-center text-[11px] font-bold">
+                  {initials(profile.name)}
+                </span>
+              )}
+              <div className="text-left leading-tight hidden sm:block">
+                <div className="text-xs font-bold text-slate-900">{profile.name}</div>
+                <div className="text-[11px] text-slate-500 font-medium">{profile.role}</div>
+              </div>
+            </>
+          ) : (
+            <>
+              <span className="w-8 h-8 rounded-full bg-slate-100 ring-1 ring-slate-200 flex items-center justify-center">
+                <User className="w-4 h-4 text-slate-400" />
+              </span>
+              <div className="text-left leading-tight hidden sm:block animate-pulse">
+                <div className="h-2.5 w-20 rounded bg-slate-200" />
+                <div className="h-2 w-14 rounded bg-slate-100 mt-1.5" />
+              </div>
+            </>
+          )}
         </div>
       </div>
     </header>

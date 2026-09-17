@@ -7,6 +7,11 @@ chat is docked as a compact panel on the right edge.
 Refactored from a single-file HTML prototype (`code.txt`) into a modular
 React + TypeScript app.
 
+> **Status:** UI complete, backend not yet wired. All sample content has been
+> removed — the app renders loading and empty states until the stubs in
+> [`src/hooks/useDashboardData.ts`](src/hooks/useDashboardData.ts) are
+> implemented. See [Integration](#integration).
+
 ---
 
 ## Stack
@@ -66,6 +71,9 @@ src/
 ├── types/
 │   └── dashboard.types.ts          All shared interfaces and prop types
 │
+├── hooks/
+│   └── useDashboardData.ts         ⚠ INTEGRATION POINT — all API stubs
+│
 └── components/
     ├── dashboard/
     │   ├── Dashboard.tsx           Layout container + chat state (composition root)
@@ -87,38 +95,96 @@ src/
   `src/types/dashboard.types.ts` — no inline prop typing.
 - **`Dashboard.tsx` is the only assembler.** Child components never import each
   other's layout; they receive data and callbacks as props.
-- **Content is data, not markup.** Tools, sessions, recent chats and the seeded
-  chat thread are exported arrays (`CLASSROOM_TOOLS`, `UPCOMING_SESSIONS`,
-  `RECENT_CHATS`, `SEED_MESSAGES`) that can be swapped for API data without
-  touching JSX.
+- **Components are presentational.** None of them fetch. Sessions, recent chats,
+  the conversation and the profile all arrive as props from `Dashboard.tsx`,
+  which reads them from a single hook.
+- **Static config vs. backend data.** Navigation items, the four tool definitions
+  (`CLASSROOM_TOOLS`) and the quick-prompt pills (`QUICK_PROMPTS`) are UI config
+  and live in code. Everything a backend owns is fetched.
 - **The logo is referenced, not copied.** `src/assets/logo.ts` imports
   `../../CodeYetu Logo.png` from the project root. Change the path in that one
   file if the asset moves.
 
 ---
 
-## How the pieces talk
+## Integration
 
-Chat state (`messages`, `draft`) lives in `Dashboard.tsx` and flows down:
+Everything the backend owns flows through one file:
+**`src/hooks/useDashboardData.ts`**. It exports `useDashboardData()`, which
+satisfies the `DashboardData` contract in `dashboard.types.ts`:
+
+```ts
+interface DashboardData {
+  profile: InstructorProfile | null;
+  sessions: UpcomingSession[];
+  recentChats: RecentChat[];
+  messages: ChatMessage[];
+  isLoading: boolean;
+  isResponding: boolean;
+  error: string | null;
+  sendMessage: (text: string) => void;
+  resetConversation: () => void;
+}
+```
+
+Inside the hook are five stubs, each marked `TODO(integration)`. They currently
+resolve to `null` / `[]`, which is why the UI shows empty states:
+
+| Stub | Suggested endpoint | Returns |
+|---|---|---|
+| `fetchProfile` | `GET /api/me` | `InstructorProfile \| null` |
+| `fetchUpcomingSessions` | `GET /api/sessions/upcoming` | `UpcomingSession[]` |
+| `fetchRecentChats` | `GET /api/assistant/conversations/recent` | `RecentChat[]` |
+| `fetchConversation` | `GET /api/assistant/conversations/current` | `ChatMessage[]` |
+| `postAssistantMessage` | `POST /api/assistant/messages` | `ChatMessage \| null` |
+
+Also set `API_BASE_URL` at the top of the file (e.g. from
+`import.meta.env.VITE_API_URL`).
+
+Replacing those five bodies is the entire integration — no component changes
+required. Loading flags, optimistic user messages, the typing indicator and
+error surfacing are already handled.
+
+To render the dashboard against your own data source instead (tests, Storybook,
+a different state library), bypass the hook by passing the contract directly:
+
+```tsx
+<Dashboard data={myDashboardData} />
+```
+
+### Placeholder states
+
+| Region | No data | Loading |
+|---|---|---|
+| Header profile | Monogram / generic avatar | Pulsing name + role bars |
+| Upcoming Sessions | Dashed "No upcoming sessions" card | Skeleton session cards |
+| Recent Assist Chats | Dashed "No recent chats" card | Skeleton rows |
+| Chat thread | "Start a conversation" prompt | Skeleton bubbles |
+| Assistant replying | — | Animated typing indicator |
+
+Errors from the hook render as a red banner at the top of the main column. The
+send button is disabled while a reply is pending or the composer is empty.
+
+---
+
+## How the pieces talk
 
 ```
 QuickActionsPanel ──onToolSelect──┐
                                   ├──> setDraft ──> ChatPanel (controlled composer)
 RecentChats ──────onChatSelect────┘
+
+ChatPanel ──onSend──> Dashboard ──sendMessage──> useDashboardData ──> API
 ```
 
 Clicking any tool card or recent-chat row prefills the assistant composer with
-that item's prompt and focuses it. Submitting appends a user bubble and, after a
-short delay, a simulated assistant reply.
-
-> **Note:** the assistant response is currently mocked in
-> `Dashboard.tsx` (`handleSend`). Wire this to the real API when the backend is
-> available.
+that item's prompt and focuses it. Submitting appends the user's bubble
+optimistically and flips `isResponding` until the API responds.
 
 ### Chat message model
 
 Assistant messages are composed of typed blocks rather than raw HTML, so rich
-responses stay renderable and type-safe:
+responses stay renderable and type-safe. Map your API response onto these:
 
 | Block | Renders |
 |---|---|
@@ -161,5 +227,5 @@ by appending one object to that array.
 
 - `code.txt` is the original HTML prototype, kept for reference. It is not part
   of the build.
-- The instructor avatar in `Dashboard.tsx` still points at a remote placeholder
-  URL and should be replaced with real profile data.
+- `UpcomingSession.accentClass` is an optional Tailwind class for the module
+  dot. The API does not need to send it — it falls back to `bg-brand-blue`.

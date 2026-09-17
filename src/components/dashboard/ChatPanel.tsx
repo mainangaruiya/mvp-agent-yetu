@@ -1,109 +1,20 @@
 import { useEffect, useRef } from 'react';
 import type { FormEvent } from 'react';
-import { Bookmark, GraduationCap, Paperclip, RotateCcw, Send } from 'lucide-react';
+import { Bookmark, GraduationCap, Paperclip, RotateCcw, Send, Sparkles } from 'lucide-react';
 import { Button } from '../ui/Button';
 import type {
   ChatBlock,
   ChatBubbleProps,
-  ChatMessage,
   ChatPanelProps,
   QuickPrompt,
 } from '../../types/dashboard.types';
 
+/** One pill per instant classroom tool, in the same order as `CLASSROOM_TOOLS`. */
 export const QUICK_PROMPTS: QuickPrompt[] = [
   { id: 'lesson-plan', emoji: '📝', label: 'Lesson Plan', prefix: 'Lesson Plan Generator: ' },
-  {
-    id: 'curriculum',
-    emoji: '🎯',
-    label: 'Curriculum Align',
-    prefix: 'Curriculum Alignment check: ',
-  },
-  { id: 'warmup', emoji: '🎮', label: 'Warmup Game', prefix: 'Session Warmup Game: ' },
-];
-
-/** The seeded conversation thread from the original screenshot. */
-export const SEED_MESSAGES: ChatMessage[] = [
-  {
-    id: 'm1',
-    role: 'user',
-    timestamp: '04:12 PM',
-    blocks: [
-      {
-        kind: 'text',
-        text: 'Help me prepare a lesson plan for teaching Python loops to beginners.',
-      },
-    ],
-  },
-  {
-    id: 'm2',
-    role: 'assistant',
-    timestamp: '04:13 PM',
-    blocks: [
-      {
-        kind: 'text',
-        text: 'Here is a highly interactive 50-minute lesson plan for beginner loop concepts:',
-      },
-      {
-        kind: 'lessonPlan',
-        title: 'Python Loops Lesson: "Repeat Without Repeating"',
-        objective:
-          'Students will conceptualize why loops are useful and write their first `for` loop to repeat simple actions.',
-        timeline: [
-          {
-            duration: '05 Min',
-            title: 'The Human Loop Warmup',
-            detail:
-              'Instruct a student to clap 5 times, highlighting how tedious it is to give instructions one by one.',
-          },
-          {
-            duration: '15 Min',
-            title: "Live Coding: Python 'for' Syntax",
-            detail:
-              'Demonstrate iterating through a list of names. Introduce the range() function.',
-          },
-          {
-            duration: '30 Min',
-            title: 'Hands-on Project & Lab',
-            detail:
-              'Students build a "Star Pattern Generator" outputting cool patterns using loops.',
-          },
-        ],
-      },
-    ],
-  },
-  {
-    id: 'm3',
-    role: 'user',
-    timestamp: '04:14 PM',
-    blocks: [{ kind: 'text', text: 'Any ideas for a fun interactive game to explain this?' }],
-  },
-  {
-    id: 'm4',
-    role: 'assistant',
-    timestamp: '04:15 PM',
-    blocks: [
-      {
-        kind: 'text',
-        text: 'Absolutely! Try the',
-        highlight: '"Robotic Instructions"',
-        suffix: ' game:',
-      },
-      {
-        kind: 'gameRules',
-        title: 'Game: Robotic Simon Says',
-        steps: [
-          { text: 'One student acts as the "Robot", executing actions.' },
-          {
-            text: 'The class must give commands in a structured Loop block: e.g.,',
-            code: 'FOR step IN range(5): step_forward()',
-          },
-          {
-            text: 'If they forget to define the range or command sequence, the Robot does nothing! This beautifully demonstrates syntax logic visually.',
-          },
-        ],
-      },
-    ],
-  },
+  { id: 'next-lesson', emoji: '⏭️', label: 'Next Lesson', prefix: 'Prepare for next lesson: ' },
+  { id: 'homework-quiz', emoji: '✅', label: 'Homework Quiz', prefix: 'Generate a homework quiz: ' },
+  { id: 'curriculum', emoji: '🎯', label: 'Curriculum', prefix: 'Review curriculum: ' },
 ];
 
 function Block({ block }: { block: ChatBlock }) {
@@ -222,6 +133,50 @@ export function ChatBubble({
   );
 }
 
+function ThreadSkeleton() {
+  return (
+    <div className="space-y-4 animate-pulse">
+      <div className="flex justify-end">
+        <div className="h-12 w-3/5 rounded-2xl rounded-tr-none bg-slate-200" />
+      </div>
+      <div className="flex gap-2">
+        <div className="w-6 h-6 rounded-full bg-slate-200 shrink-0" />
+        <div className="h-24 flex-1 rounded-2xl rounded-tl-none bg-slate-100" />
+      </div>
+    </div>
+  );
+}
+
+function EmptyThread() {
+  return (
+    <div className="h-full flex flex-col items-center justify-center text-center px-5 py-10">
+      <div className="w-11 h-11 rounded-full bg-blue-50 flex items-center justify-center mb-3">
+        <Sparkles className="w-5 h-5 text-brand-blue" />
+      </div>
+      <p className="text-sm font-bold text-slate-800">Start a conversation</p>
+      <p className="text-[11px] text-slate-400 mt-1 leading-relaxed">
+        Pick an Instant Classroom Tool or ask a question below, and the assistant
+        will reply here.
+      </p>
+    </div>
+  );
+}
+
+function TypingIndicator() {
+  return (
+    <div className="flex gap-2 items-start">
+      <div className="w-6 h-6 rounded-full bg-brand-blue flex items-center justify-center text-white shrink-0 mt-0.5">
+        <GraduationCap className="w-3.5 h-3.5" />
+      </div>
+      <div className="bg-slate-100/90 border border-slate-200 rounded-2xl rounded-tl-none px-3 py-2.5 flex items-center gap-1">
+        <span className="w-1.5 h-1.5 rounded-full bg-slate-400 animate-bounce [animation-delay:-0.3s]" />
+        <span className="w-1.5 h-1.5 rounded-full bg-slate-400 animate-bounce [animation-delay:-0.15s]" />
+        <span className="w-1.5 h-1.5 rounded-full bg-slate-400 animate-bounce" />
+      </div>
+    </div>
+  );
+}
+
 /**
  * Compact assistant chat, docked to the right edge at 340px (380px on very
  * wide screens). Header + prompt pills + input dock stay fixed; only the
@@ -232,6 +187,8 @@ export function ChatPanel({
   draft,
   onDraftChange,
   onSend,
+  isResponding = false,
+  isLoading = false,
   quickPrompts = QUICK_PROMPTS,
   onBookmark,
   onRefresh,
@@ -245,12 +202,12 @@ export function ChatPanel({
   useEffect(() => {
     const node = scrollRef.current;
     if (node) node.scrollTop = node.scrollHeight;
-  }, [messages]);
+  }, [messages, isResponding]);
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const text = draft.trim();
-    if (!text) return;
+    if (!text || isResponding) return;
     onSend(text);
   };
 
@@ -311,9 +268,15 @@ export function ChatPanel({
         id="dockedChatContainer"
         ref={scrollRef}
       >
-        {messages.map((message) => (
-          <ChatBubble key={message.id} message={message} />
-        ))}
+        {isLoading ? (
+          <ThreadSkeleton />
+        ) : messages.length === 0 ? (
+          <EmptyThread />
+        ) : (
+          messages.map((message) => <ChatBubble key={message.id} message={message} />)
+        )}
+
+        {isResponding && <TypingIndicator />}
       </div>
 
       {/* Bottom input dock */}
@@ -341,7 +304,8 @@ export function ChatPanel({
           />
 
           <button
-            className="w-7 h-7 rounded-full bg-brand-blue text-white flex items-center justify-center shrink-0 shadow-xs hover:bg-blue-700 active:scale-95 transition-all"
+            className="w-7 h-7 rounded-full bg-brand-blue text-white flex items-center justify-center shrink-0 shadow-xs hover:bg-blue-700 active:scale-95 transition-all disabled:opacity-50 disabled:pointer-events-none"
+            disabled={isResponding || draft.trim().length === 0}
             title="Send message"
             type="submit"
           >

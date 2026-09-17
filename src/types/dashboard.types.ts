@@ -34,7 +34,8 @@ export interface InstructorProfile {
 }
 
 export interface HeaderProps {
-  profile: InstructorProfile;
+  /** `null` while the profile request is in flight. */
+  profile: InstructorProfile | null;
   searchPlaceholder?: string;
   statusLabel?: string;
   notificationCount?: number;
@@ -110,12 +111,13 @@ export interface UpcomingSession {
   time: string;
   studentCount: number;
   status: SessionStatus;
-  /** Tailwind background class for the module dot. */
-  dotClass: string;
+  /** Optional Tailwind background class for the module dot. */
+  accentClass?: string;
 }
 
 export interface UpcomingSessionsProps {
-  sessions?: UpcomingSession[];
+  sessions: UpcomingSession[];
+  isLoading?: boolean;
   scheduleHref?: string;
   /** Sessions render 3-up in a wide column, 1-up when stacked beside chat. */
   columns?: 1 | 2 | 3;
@@ -128,14 +130,15 @@ export interface UpcomingSessionsProps {
 export interface RecentChat {
   id: string;
   title: string;
-  /** e.g. "Yesterday" or "Oct 29, 2025". */
+  /** Preformatted display date, e.g. "Yesterday" or "12 Mar 2026". */
   date: string;
   exchanges: number;
   prompt: string;
 }
 
 export interface RecentChatsProps {
-  chats?: RecentChat[];
+  chats: RecentChat[];
+  isLoading?: boolean;
   onChatSelect: (prompt: string) => void;
 }
 
@@ -189,6 +192,9 @@ export interface ChatPanelProps {
   draft: string;
   onDraftChange: (value: string) => void;
   onSend: (text: string) => void;
+  /** True between sending a message and the assistant reply arriving. */
+  isResponding?: boolean;
+  isLoading?: boolean;
   quickPrompts?: QuickPrompt[];
   onBookmark?: () => void;
   onRefresh?: () => void;
@@ -227,6 +233,26 @@ export interface ButtonProps
 /* ------------------------------------------------------------------ */
 
 export interface DashboardProps {
-  profile?: InstructorProfile;
-  initialMessages?: ChatMessage[];
+  /** Overrides the data hook. Leave unset to use `useDashboardData()`. */
+  data?: DashboardData;
+}
+
+/* ------------------------------------------------------------------ */
+/* Data layer contract                                                 */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Everything `Dashboard` needs from the backend. `useDashboardData()` is the
+ * single implementation of this contract — wire the real API there.
+ */
+export interface DashboardData {
+  profile: InstructorProfile | null;
+  sessions: UpcomingSession[];
+  recentChats: RecentChat[];
+  messages: ChatMessage[];
+  isLoading: boolean;
+  isResponding: boolean;
+  error: string | null;
+  sendMessage: (text: string) => void;
+  resetConversation: () => void;
 }
