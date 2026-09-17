@@ -1,0 +1,356 @@
+import { useEffect, useRef } from 'react';
+import type { FormEvent } from 'react';
+import { Bookmark, GraduationCap, Paperclip, RotateCcw, Send } from 'lucide-react';
+import { Button } from '../ui/Button';
+import type {
+  ChatBlock,
+  ChatBubbleProps,
+  ChatMessage,
+  ChatPanelProps,
+  QuickPrompt,
+} from '../../types/dashboard.types';
+
+export const QUICK_PROMPTS: QuickPrompt[] = [
+  { id: 'lesson-plan', emoji: '📝', label: 'Lesson Plan', prefix: 'Lesson Plan Generator: ' },
+  {
+    id: 'curriculum',
+    emoji: '🎯',
+    label: 'Curriculum Align',
+    prefix: 'Curriculum Alignment check: ',
+  },
+  { id: 'warmup', emoji: '🎮', label: 'Warmup Game', prefix: 'Session Warmup Game: ' },
+];
+
+/** The seeded conversation thread from the original screenshot. */
+export const SEED_MESSAGES: ChatMessage[] = [
+  {
+    id: 'm1',
+    role: 'user',
+    timestamp: '04:12 PM',
+    blocks: [
+      {
+        kind: 'text',
+        text: 'Help me prepare a lesson plan for teaching Python loops to beginners.',
+      },
+    ],
+  },
+  {
+    id: 'm2',
+    role: 'assistant',
+    timestamp: '04:13 PM',
+    blocks: [
+      {
+        kind: 'text',
+        text: 'Here is a highly interactive 50-minute lesson plan for beginner loop concepts:',
+      },
+      {
+        kind: 'lessonPlan',
+        title: 'Python Loops Lesson: "Repeat Without Repeating"',
+        objective:
+          'Students will conceptualize why loops are useful and write their first `for` loop to repeat simple actions.',
+        timeline: [
+          {
+            duration: '05 Min',
+            title: 'The Human Loop Warmup',
+            detail:
+              'Instruct a student to clap 5 times, highlighting how tedious it is to give instructions one by one.',
+          },
+          {
+            duration: '15 Min',
+            title: "Live Coding: Python 'for' Syntax",
+            detail:
+              'Demonstrate iterating through a list of names. Introduce the range() function.',
+          },
+          {
+            duration: '30 Min',
+            title: 'Hands-on Project & Lab',
+            detail:
+              'Students build a "Star Pattern Generator" outputting cool patterns using loops.',
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'm3',
+    role: 'user',
+    timestamp: '04:14 PM',
+    blocks: [{ kind: 'text', text: 'Any ideas for a fun interactive game to explain this?' }],
+  },
+  {
+    id: 'm4',
+    role: 'assistant',
+    timestamp: '04:15 PM',
+    blocks: [
+      {
+        kind: 'text',
+        text: 'Absolutely! Try the',
+        highlight: '"Robotic Instructions"',
+        suffix: ' game:',
+      },
+      {
+        kind: 'gameRules',
+        title: 'Game: Robotic Simon Says',
+        steps: [
+          { text: 'One student acts as the "Robot", executing actions.' },
+          {
+            text: 'The class must give commands in a structured Loop block: e.g.,',
+            code: 'FOR step IN range(5): step_forward()',
+          },
+          {
+            text: 'If they forget to define the range or command sequence, the Robot does nothing! This beautifully demonstrates syntax logic visually.',
+          },
+        ],
+      },
+    ],
+  },
+];
+
+function Block({ block }: { block: ChatBlock }) {
+  switch (block.kind) {
+    case 'text':
+      return (
+        <p className="text-[12px] text-slate-700 leading-relaxed">
+          {block.text}
+          {block.highlight && <strong> {block.highlight}</strong>}
+          {block.suffix}
+        </p>
+      );
+
+    case 'lessonPlan':
+      return (
+        <div className="bg-white border border-slate-200 rounded-xl p-3 space-y-2">
+          <div>
+            <h4 className="font-bold text-xs text-brand-blue">{block.title}</h4>
+            <div className="mt-1 text-[11px] text-slate-600">
+              <span className="font-bold uppercase text-[10px] text-slate-400 block tracking-wider">
+                Core Objective
+              </span>
+              {block.objective}
+            </div>
+          </div>
+          <div className="border-t border-slate-100 pt-2 space-y-2 text-[11px]">
+            <span className="font-bold uppercase text-[10px] text-slate-400 block tracking-wider">
+              Timeline Breakdown
+            </span>
+            {block.timeline.map((entry) => (
+              <div className="flex items-start gap-2" key={entry.duration}>
+                <span className="font-bold text-brand-blue shrink-0 w-12">
+                  {entry.duration}
+                </span>
+                <div>
+                  <strong className="text-slate-800">{entry.title}</strong>
+                  <p className="text-slate-500 text-[10.5px]">{entry.detail}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+
+    case 'gameRules':
+      return (
+        <div className="bg-white border border-slate-200 rounded-xl p-3 space-y-2 text-[11px] leading-relaxed">
+          <h5 className="font-bold text-slate-900 text-xs">{block.title}</h5>
+          <ol className="list-decimal pl-4 space-y-1.5 text-slate-600">
+            {block.steps.map((step) => (
+              <li key={step.text}>
+                {step.text}
+                {step.code && (
+                  <code className="block font-mono text-[11px] text-brand-blue bg-blue-50/80 p-1.5 rounded mt-1 font-semibold border border-blue-100">
+                    {step.code}
+                  </code>
+                )}
+              </li>
+            ))}
+          </ol>
+        </div>
+      );
+
+    case 'notice':
+      return (
+        <div className="bg-white border border-emerald-200 rounded-xl p-2.5 text-[11px] text-emerald-800">
+          {block.text}
+        </div>
+      );
+
+    default:
+      return null;
+  }
+}
+
+export function ChatBubble({
+  message,
+  assistantName = 'AgentYetu Teaching Assistant',
+}: ChatBubbleProps) {
+  if (message.role === 'user') {
+    return (
+      <div className="flex justify-end">
+        <div className="max-w-[88%] bg-brand-blue text-white rounded-2xl rounded-tr-none px-3.5 py-2.5 shadow-xs">
+          {message.blocks.map((block, index) =>
+            block.kind === 'text' ? (
+              <p className="text-[12.5px] leading-relaxed" key={index}>
+                {block.text}
+              </p>
+            ) : null,
+          )}
+          <span className="block text-[10px] text-blue-200 text-right mt-1 font-medium">
+            {message.timestamp}
+          </span>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex gap-2 items-start max-w-[96%]">
+      <div className="w-6 h-6 rounded-full bg-brand-blue flex items-center justify-center text-white shrink-0 mt-0.5">
+        <GraduationCap className="w-3.5 h-3.5" />
+      </div>
+      <div className="bg-slate-100/90 border border-slate-200 rounded-2xl rounded-tl-none p-3 text-slate-800 space-y-2 shadow-xs flex-1 min-w-0">
+        <div className="flex items-center justify-between text-[10.5px] gap-2">
+          <span className="font-bold uppercase tracking-wider text-brand-blue truncate">
+            {assistantName}
+          </span>
+          <span className="text-slate-400 shrink-0">{message.timestamp}</span>
+        </div>
+        {message.blocks.map((block, index) => (
+          <Block block={block} key={index} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Compact assistant chat, docked to the right edge at 340px (380px on very
+ * wide screens). Header + prompt pills + input dock stay fixed; only the
+ * conversation body scrolls.
+ */
+export function ChatPanel({
+  messages,
+  draft,
+  onDraftChange,
+  onSend,
+  quickPrompts = QUICK_PROMPTS,
+  onBookmark,
+  onRefresh,
+  assistantName = 'AgentYetu Assistant',
+  assistantStatus = 'Always active • Expert Teaching Guide',
+}: ChatPanelProps) {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  // Pin to the newest message whenever the thread grows.
+  useEffect(() => {
+    const node = scrollRef.current;
+    if (node) node.scrollTop = node.scrollHeight;
+  }, [messages]);
+
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const text = draft.trim();
+    if (!text) return;
+    onSend(text);
+  };
+
+  const handleQuickPrompt = (prefix: string) => {
+    onDraftChange(prefix);
+    inputRef.current?.focus();
+  };
+
+  return (
+    <aside className="w-[340px] 2xl:w-[380px] min-w-[320px] bg-white border-l border-slate-200 flex flex-col shrink-0 h-full select-none z-10">
+      {/* Assistant header */}
+      <div className="px-4 py-3 border-b border-slate-200 flex items-center justify-between bg-white shrink-0">
+        <div className="flex items-center gap-2.5 min-w-0">
+          <div className="w-9 h-9 rounded-full bg-brand-blue flex items-center justify-center text-white shadow-xs shrink-0">
+            <GraduationCap className="w-5 h-5" />
+          </div>
+          <div className="min-w-0">
+            <h3 className="text-sm font-bold text-slate-900 leading-tight truncate">
+              {assistantName}
+            </h3>
+            <div className="flex items-center gap-1 text-[11px] text-slate-500 font-medium">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
+              <span className="truncate">{assistantStatus}</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-1 text-slate-400 shrink-0">
+          <Button
+            onClick={onBookmark}
+            title="Bookmark conversation"
+            variant="icon"
+          >
+            <Bookmark className="w-[18px] h-[18px]" />
+          </Button>
+          <Button onClick={onRefresh} title="Refresh conversation" variant="icon">
+            <RotateCcw className="w-[18px] h-[18px]" />
+          </Button>
+        </div>
+      </div>
+
+      {/* Horizontal prompt pill badges */}
+      <div className="px-3 py-2 bg-slate-50 border-b border-slate-200 flex gap-2 overflow-x-auto no-scrollbar shrink-0 text-xs">
+        {quickPrompts.map((prompt) => (
+          <Button
+            key={prompt.id}
+            onClick={() => handleQuickPrompt(prompt.prefix)}
+            variant="pill"
+          >
+            <span>{prompt.emoji}</span> {prompt.label}
+          </Button>
+        ))}
+      </div>
+
+      {/* Scrollable conversation body */}
+      <div
+        className="flex-1 overflow-y-auto custom-scrollbar p-3.5 space-y-4 text-xs"
+        id="dockedChatContainer"
+        ref={scrollRef}
+      >
+        {messages.map((message) => (
+          <ChatBubble key={message.id} message={message} />
+        ))}
+      </div>
+
+      {/* Bottom input dock */}
+      <div className="p-3 border-t border-slate-200 bg-white shrink-0">
+        <form
+          className="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-full px-3 py-1.5 focus-within:ring-2 focus-within:ring-brand-blue/30 focus-within:border-brand-blue transition-all"
+          onSubmit={handleSubmit}
+        >
+          <button
+            className="text-slate-400 hover:text-slate-600 transition-colors p-0.5 shrink-0"
+            title="Attach file"
+            type="button"
+          >
+            <Paperclip className="w-[18px] h-[18px]" />
+          </button>
+
+          <input
+            className="flex-1 min-w-0 bg-transparent border-0 p-0 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-0"
+            id="assistantInput"
+            onChange={(event) => onDraftChange(event.target.value)}
+            placeholder="Ask about curriculum or lesson plans..."
+            ref={inputRef}
+            type="text"
+            value={draft}
+          />
+
+          <button
+            className="w-7 h-7 rounded-full bg-brand-blue text-white flex items-center justify-center shrink-0 shadow-xs hover:bg-blue-700 active:scale-95 transition-all"
+            title="Send message"
+            type="submit"
+          >
+            <Send className="w-[15px] h-[15px]" />
+          </button>
+        </form>
+      </div>
+    </aside>
+  );
+}
+
+export default ChatPanel;

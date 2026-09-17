@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+
+<html class="h-full bg-slate-50 font-sans antialiased selection:bg-blue-500 selection:text-white" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CodeYetu Instructor Hub</title>
+<!-- Tailwind CSS v3 with Plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              blue: '#1D68F2',
+              navy: '#0F172A',
+              orange: '#F97316',
+              pink: '#E11D48',
+              purple: '#7C3AED',
+              emerald: '#10B981',
+              cyan: '#06B6D4'
+            }
+          },
+          fontFamily: {
+            sans: ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 9999px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+</head>
+<body class="h-screen overflow-hidden flex bg-slate-50 text-slate-800">
+<!-- ========================================================================= -->
+<!-- 1. LEFT NAVIGATION SIDEBAR (Identical to Original Screenshot IMAGE_4)      -->
+<!-- ========================================================================= -->
+<aside class="w-60 bg-white border-r border-slate-200 flex flex-col justify-between shrink-0 z-20 select-none">
+<!-- Top Brand & Main Navigation -->
+<div class="flex flex-col">
+<!-- CodeYetu Logo Area -->
+<div class="px-5 py-4 border-b border-slate-100 flex items-center">
+<img alt="CodeYetu - #KidsThatCode" class="h-10 w-auto object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBWBSyQ_tIcg8cBFf5MSx2YCWycizAJDmypN43JHLND9lMmJDatzzuZpG2Z73ff5sQdOFJ0PECFwsIicb6uOX_D9SDvC5YQpHVeCkl7jWGxs0aJthjKO0pO5Gdn7v1_NZQ2BMQ7GsBvxpSIqv84-os7Px_GECH_cO4arM10PFiLMPQET9GKZLqMpB0Ore2Np-HYOg3PE4X7vHw8WWWut9G4MIfbrNs_cQKuM7EZiwAfppSRehZy5SAJYsQvdPhl4TKqGQ"/>
+</div>
+<!-- Main Navigation Menu -->
+<nav class="p-3 space-y-1 text-[13px] font-medium text-slate-600">
+<!-- Dashboard Overview -->
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 text-slate-700 transition-colors" href="#dashboard">
+<span class="material-symbols-outlined text-[19px] text-slate-500">grid_view</span>
+<span>Dashboard Overview</span>
+</a>
+<!-- My Profile -->
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 text-slate-700 transition-colors" href="#profile">
+<span class="material-symbols-outlined text-[19px] text-slate-500">account_circle</span>
+<span>My Profile</span>
+</a>
+<!-- My Classes -->
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 text-slate-700 transition-colors" href="#classes">
+<span class="material-symbols-outlined text-[19px] text-slate-500">menu_book</span>
+<span>My Classes</span>
+</a>
+<!-- My Students -->
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 text-slate-700 transition-colors" href="#students">
+<span class="material-symbols-outlined text-[19px] text-slate-500">group</span>
+<span>My Students</span>
+</a>
+<!-- Curriculum Hub -->
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 text-slate-700 transition-colors" href="#curriculum">
+<span class="material-symbols-outlined text-[19px] text-slate-500">alt_route</span>
+<span>Curriculum Hub</span>
+</a>
+<!-- Calendar & Events -->
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 text-slate-700 transition-colors" href="#calendar">
+<span class="material-symbols-outlined text-[19px] text-slate-500">calendar_today</span>
+<span>Calendar &amp; Events</span>
+</a>
+<!-- Teaching Assistant (ACTIVE STATE from screenshot) -->
+<a class="flex items-center justify-between px-3 py-2 rounded-lg bg-blue-50/90 text-brand-blue font-semibold transition-colors relative" href="#assistant">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[19px] text-brand-blue">auto_awesome</span>
+<span>Teaching Assistant</span>
+</div>
+<!-- Active Blue Right Indicator Bar -->
+<span class="w-1 h-5 bg-brand-blue rounded-full"></span>
+</a>
+<!-- Reports & Attendance -->
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 text-slate-700 transition-colors" href="#reports">
+<span class="material-symbols-outlined text-[19px] text-slate-500">assignment</span>
+<span>Reports &amp; Attendance</span>
+</a>
+</nav>
+</div>
+<!-- Bottom Navigation Links -->
+<div class="p-3 border-t border-slate-100 space-y-1 text-[13px] font-medium text-slate-600">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 text-slate-700 transition-colors" href="#settings">
+<span class="material-symbols-outlined text-[19px] text-slate-500">settings</span>
+<span>Settings</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-red-50 hover:text-red-600 text-slate-700 transition-colors" href="#logout">
+<span class="material-symbols-outlined text-[19px] text-slate-500 group-hover:text-red-600">logout</span>
+<span>Log Out</span>
+</a>
+</div>
+</aside>
+<!-- ========================================================================= -->
+<!-- MAIN WORKSPACE + TOP HEADER + DOCKED ASSISTANT (DESKTOP WORKSPACE)        -->
+<!-- ========================================================================= -->
+<div class="flex-1 flex flex-col h-full overflow-hidden min-w-0">
+<!-- ======================================================================= -->
+<!-- 2. TOP HEADER BAR (Identical to Original Screenshot IMAGE_4)            -->
+<!-- ======================================================================= -->
+<header class="h-16 bg-white border-b border-slate-200 px-6 flex items-center justify-between shrink-0 z-10">
+<!-- Search input in rounded pill -->
+<div class="relative w-full max-w-md">
+<span class="material-symbols-outlined text-[18px] text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2">search</span>
+<input class="w-full pl-10 pr-4 py-1.5 bg-slate-50 border border-slate-200 rounded-full text-[13px] placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-blue/30 focus:border-brand-blue transition-all" placeholder="Search curriculum, strategies, files..." type="text"/>
+</div>
+<!-- Right Header Actions -->
+<div class="flex items-center gap-4">
+<!-- Active Assistant Status Badge -->
+<div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+<span>Active Assistant</span>
+</div>
+<!-- Notification Bell Icon -->
+<button aria-label="Notifications" class="relative p-1.5 text-slate-500 hover:text-slate-700 rounded-full hover:bg-slate-100 transition-colors">
+<span class="material-symbols-outlined text-[20px]">notifications</span>
+</button>
+<!-- Instructor Profile Details -->
+<div class="flex items-center gap-2.5 pl-2 border-l border-slate-200">
+<img alt="Edwin Owino" class="w-8 h-8 rounded-full object-cover ring-1 ring-slate-200" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCxgVjafMe0Yk42HJ-4MP3cHe5O9YRfQxhnf1F6EmiRBg3fUoWaMOk06BFNB1JPiB1a0OPYQP1m7IV1YPDAu_JDft_8nvmGD1dpk5BiIvn-LHiYqrUICcqEw3lN-4OaCBWddskzW_Y7Ys7zh4V7f5v_MaDMJhWSBZVgnw4DlIxKGGnOO7OraZaiYbJQB_ITd4AhBExxVlm-TJvckKA_8UQmT4Zq7cItSIrmt1rxGjlQSXqeXtVFb8cs"/>
+<div class="text-left leading-tight hidden sm:block">
+<div class="text-xs font-bold text-slate-900">Edwin Owino</div>
+<div class="text-[11px] text-slate-500 font-medium">Senior Instructor</div>
+</div>
+</div>
+</div>
+</header>
+<!-- ======================================================================= -->
+<!-- CONTENT LAYOUT: Expanded Main Content + Docked Right Assistant Chat      -->
+<!-- ======================================================================= -->
+<div class="flex-1 flex overflow-hidden min-w-0">
+<!-- ===================================================================== -->
+<!-- 3. CENTRAL MAIN WORKSPACE (Expanded Instant Tools & Overview)         -->
+<!-- ===================================================================== -->
+<main class="flex-1 overflow-y-auto custom-scrollbar p-6 bg-slate-50 space-y-7 min-w-0">
+<!-- HERO / PRIMARY SECTION: Instant Classroom Tools -->
+<section class="space-y-4">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+<div>
+<div class="flex items-center gap-2">
+<span class="flex h-6 w-6 items-center justify-center rounded-lg bg-amber-100 text-amber-600 font-bold text-xs">⚡</span>
+<h1 class="text-lg font-bold text-slate-900 tracking-tight">Instant Classroom Tools</h1>
+<span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-blue-100 text-brand-blue uppercase tracking-wider">6 Ready Tools</span>
+</div>
+<p class="text-xs text-slate-500 mt-0.5">AI-accelerated lesson creation, interactive puzzles, and real-time student warmups.</p>
+</div>
+<div class="flex items-center gap-2 text-xs text-slate-500">
+<span class="inline-flex items-center gap-1 font-medium bg-white px-2.5 py-1 rounded-lg border border-slate-200 shadow-xs">
+<span class="material-symbols-outlined text-[15px] text-brand-blue">auto_awesome</span>
+                Click any tool to launch in Assistant
+              </span>
+</div>
+</div>
+<!-- Prominent Interactive Tool Grid (3 Columns on Large Screens) -->
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+<!-- Tool 1: Generate Homework Quiz -->
+<div class="group bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl p-4 text-white shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer flex flex-col justify-between relative overflow-hidden active:scale-[0.99]" onclick="populateAssistantPrompt('Generate a 5-question beginner Python Loop quiz with multiple choice, test solutions, and rubric.')">
+<div class="absolute -right-4 -bottom-4 w-24 h-24 bg-white/10 rounded-full blur-xl pointer-events-none group-hover:scale-125 transition-transform"></div>
+<div>
+<div class="flex items-center justify-between mb-3">
+<div class="w-9 h-9 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center text-white">
+<span class="material-symbols-outlined text-[20px]">check_circle</span>
+</div>
+<span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-white/20">Quiz AI</span>
+</div>
+<h3 class="font-bold text-sm tracking-tight mb-1">Generate Homework Quiz</h3>
+<p class="text-xs text-blue-100 leading-relaxed">Instant Python &amp; Scratch quizzes with auto-grading rubrics and solution keys.</p>
+</div>
+<div class="mt-4 pt-3 border-t border-white/20 flex items-center justify-between text-xs font-semibold">
+<span>Create Quiz</span>
+<span class="w-6 h-6 rounded-full bg-white text-blue-700 flex items-center justify-center font-bold text-xs group-hover:translate-x-0.5 transition-transform">→</span>
+</div>
+</div>
+<!-- Tool 2: Create Scratch Worksheet -->
+<div class="group bg-gradient-to-br from-purple-600 to-pink-600 rounded-2xl p-4 text-white shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer flex flex-col justify-between relative overflow-hidden active:scale-[0.99]" onclick="populateAssistantPrompt('Create a printable Scratch Sprite animation block worksheet with visual sequence puzzles.')">
+<div class="absolute -right-4 -bottom-4 w-24 h-24 bg-white/10 rounded-full blur-xl pointer-events-none group-hover:scale-125 transition-transform"></div>
+<div>
+<div class="flex items-center justify-between mb-3">
+<div class="w-9 h-9 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center text-white">
+<span class="material-symbols-outlined text-[20px]">description</span>
+</div>
+<span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-white/20">Printables</span>
+</div>
+<h3 class="font-bold text-sm tracking-tight mb-1">Create Scratch Worksheet</h3>
+<p class="text-xs text-purple-100 leading-relaxed">Block-coding templates, puzzle challenges, and printable PDF student handouts.</p>
+</div>
+<div class="mt-4 pt-3 border-t border-white/20 flex items-center justify-between text-xs font-semibold">
+<span>Build Worksheet</span>
+<span class="w-6 h-6 rounded-full bg-white text-purple-700 flex items-center justify-center font-bold text-xs group-hover:translate-x-0.5 transition-transform">→</span>
+</div>
+</div>
+<!-- Tool 3: Review Loop Curriculum -->
+<div class="group bg-white border border-slate-200 hover:border-amber-400 rounded-2xl p-4 shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer flex flex-col justify-between active:scale-[0.99]" onclick="populateAssistantPrompt('Review the learning goals and syntax coverage for beginner loop curriculums in Grades 4 to 6.')">
+<div>
+<div class="flex items-center justify-between mb-3">
+<div class="w-9 h-9 rounded-xl bg-amber-50 border border-amber-200 text-amber-600 flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">sync</span>
+</div>
+<span class="text-[10px] font-bold tracking-wider uppercase px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-100">Audit</span>
+</div>
+<h3 class="font-bold text-sm text-slate-900 tracking-tight mb-1">Review Loop Curriculum</h3>
+<p class="text-xs text-slate-500 leading-relaxed">Audit learning goals, repeat &amp; range() syntax coverage, and lab benchmarks.</p>
+</div>
+<div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-brand-orange">
+<span>Inspect Map</span>
+<span class="w-6 h-6 rounded-full bg-amber-100 flex items-center justify-center group-hover:translate-x-0.5 transition-transform">→</span>
+</div>
+</div>
+<!-- Tool 4: Lesson Plan Generator -->
+<div class="group bg-white border border-slate-200 hover:border-emerald-400 rounded-2xl p-4 shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer flex flex-col justify-between active:scale-[0.99]" onclick="populateAssistantPrompt('Help me prepare a lesson plan for teaching Python loops to beginners.')">
+<div>
+<div class="flex items-center justify-between mb-3">
+<div class="w-9 h-9 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-600 flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">auto_stories</span>
+</div>
+<span class="text-[10px] font-bold tracking-wider uppercase px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-100">50-Min Plan</span>
+</div>
+<h3 class="font-bold text-sm text-slate-900 tracking-tight mb-1">Lesson Plan Generator</h3>
+<p class="text-xs text-slate-500 leading-relaxed">50-minute structured timeline with dynamic warmups, live coding syntax, and rubrics.</p>
+</div>
+<div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-emerald-600">
+<span>Build Plan</span>
+<span class="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center group-hover:translate-x-0.5 transition-transform">→</span>
+</div>
+</div>
+<!-- Tool 5: Session Warmup Game -->
+<div class="group bg-gradient-to-br from-rose-500 to-pink-500 rounded-2xl p-4 text-white shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer flex flex-col justify-between relative overflow-hidden active:scale-[0.99]" onclick="populateAssistantPrompt('Tell me how to run the Robotic Simon Says warmup game for teaching code loops.')">
+<div class="absolute -right-4 -bottom-4 w-24 h-24 bg-white/10 rounded-full blur-xl pointer-events-none group-hover:scale-125 transition-transform"></div>
+<div>
+<div class="flex items-center justify-between mb-3">
+<div class="w-9 h-9 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center text-white">
+<span class="material-symbols-outlined text-[20px]">sports_esports</span>
+</div>
+<span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-white/20">Gamified</span>
+</div>
+<h3 class="font-bold text-sm tracking-tight mb-1">Session Warmup Game</h3>
+<p class="text-xs text-rose-100 leading-relaxed">"Robotic Simon Says" and interactive syntax physical games for young coders.</p>
+</div>
+<div class="mt-4 pt-3 border-t border-white/20 flex items-center justify-between text-xs font-semibold">
+<span>Launch Game</span>
+<span class="w-6 h-6 rounded-full bg-white text-rose-700 flex items-center justify-center font-bold text-xs group-hover:translate-x-0.5 transition-transform">→</span>
+</div>
+</div>
+<!-- Tool 6: Code Debugging Lab -->
+<div class="group bg-white border border-slate-200 hover:border-cyan-400 rounded-2xl p-4 shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer flex flex-col justify-between active:scale-[0.99]" onclick="populateAssistantPrompt('Generate a fun spot-the-syntax-bug code lab for kids learning for-loops.')">
+<div>
+<div class="flex items-center justify-between mb-3">
+<div class="w-9 h-9 rounded-xl bg-cyan-50 border border-cyan-200 text-cyan-600 flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">bug_report</span>
+</div>
+<span class="text-[10px] font-bold tracking-wider uppercase px-2 py-0.5 rounded-full bg-cyan-50 text-cyan-700 border border-cyan-100">Bug Hunt</span>
+</div>
+<h3 class="font-bold text-sm text-slate-900 tracking-tight mb-1">Code Debugging Lab</h3>
+<p class="text-xs text-slate-500 leading-relaxed">Interactive code challenge with syntax spot-the-bug exercises and guided hints.</p>
+</div>
+<div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-cyan-600">
+<span>Open Lab</span>
+<span class="w-6 h-6 rounded-full bg-cyan-100 flex items-center justify-center group-hover:translate-x-0.5 transition-transform">→</span>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION: Your Upcoming Sessions (From Original Screenshot) -->
+<section class="space-y-3">
+<div class="flex items-center justify-between">
+<h2 class="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-2">
+<span>Your Upcoming Sessions</span>
+<span class="px-2 py-0.5 rounded-full bg-slate-200 text-slate-700 text-[10px] font-bold lowercase">3 scheduled</span>
+</h2>
+<a class="text-xs font-semibold text-brand-blue hover:underline" href="#view-calendar">View Full Schedule →</a>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+<!-- Session 1 -->
+<div class="bg-white rounded-xl border border-slate-200/80 p-3.5 shadow-sm hover:border-slate-300 transition-colors flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-2">
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-brand-blue"></span>
+<span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Module 3</span>
+</div>
+<span class="text-[11px] font-semibold px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200">Ready</span>
+</div>
+<h4 class="text-sm font-bold text-slate-900 leading-snug">Python Introduction &amp; Variables</h4>
+</div>
+<div class="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px] text-slate-400">schedule</span>
+                  Today, 02:00 PM
+                </span>
+<span class="flex items-center gap-1 font-medium">
+<span class="material-symbols-outlined text-[15px] text-slate-400">group</span>
+                  14 students
+                </span>
+</div>
+</div>
+<!-- Session 2 -->
+<div class="bg-white rounded-xl border border-slate-200/80 p-3.5 shadow-sm hover:border-slate-300 transition-colors flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-2">
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-purple-600"></span>
+<span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Scratch Juniors</span>
+</div>
+<span class="text-[11px] font-semibold px-2 py-0.5 rounded-md bg-amber-50 text-amber-700 border border-amber-200">In Prep</span>
+</div>
+<h4 class="text-sm font-bold text-slate-900 leading-snug">Scratch Game Design Basics</h4>
+</div>
+<div class="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px] text-slate-400">schedule</span>
+                  Tomorrow, 09:30 AM
+                </span>
+<span class="flex items-center gap-1 font-medium">
+<span class="material-symbols-outlined text-[15px] text-slate-400">group</span>
+                  18 students
+                </span>
+</div>
+</div>
+<!-- Session 3 -->
+<div class="bg-white rounded-xl border border-slate-200/80 p-3.5 shadow-sm hover:border-slate-300 transition-colors flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-2">
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-brand-orange"></span>
+<span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Staff Sync</span>
+</div>
+<span class="text-[11px] font-semibold px-2 py-0.5 rounded-md bg-blue-50 text-brand-blue border border-blue-200">Scheduled</span>
+</div>
+<h4 class="text-sm font-bold text-slate-900 leading-snug">Trainer Sync &amp; Reviews</h4>
+</div>
+<div class="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px] text-slate-400">schedule</span>
+                  Friday, 04:00 PM
+                </span>
+<span class="flex items-center gap-1 font-medium">
+<span class="material-symbols-outlined text-[15px] text-slate-400">group</span>
+                  8 students
+                </span>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION: Recent Assist Chats (From Original Screenshot) -->
+<section class="space-y-3 pb-4">
+<h2 class="text-xs font-bold uppercase tracking-wider text-slate-500">Recent Assist Chats</h2>
+<div class="bg-white rounded-xl border border-slate-200 divide-y divide-slate-100 shadow-sm overflow-hidden text-xs">
+<button class="w-full px-4 py-3 flex items-center justify-between hover:bg-slate-50 transition-colors text-left" onclick="populateAssistantPrompt('How can I better handle a shy student who gets stuck during interactive coding?')">
+<div>
+<p class="font-semibold text-slate-800 text-[13px]">Handling shy student block</p>
+<p class="text-[11px] text-slate-400 mt-0.5">Yesterday • 4 exchanges</p>
+</div>
+<span class="material-symbols-outlined text-[18px] text-slate-400">chevron_right</span>
+</button>
+<button class="w-full px-4 py-3 flex items-center justify-between hover:bg-slate-50 transition-colors text-left" onclick="populateAssistantPrompt('Show me the HTML/CSS Quick Cheatsheet for beginners.')">
+<div>
+<p class="font-semibold text-slate-800 text-[13px]">HTML/CSS Quick Cheatsheet</p>
+<p class="text-[11px] text-slate-400 mt-0.5">Oct 29, 2025 • 12 exchanges</p>
+</div>
+<span class="material-symbols-outlined text-[18px] text-slate-400">chevron_right</span>
+</button>
+<button class="w-full px-4 py-3 flex items-center justify-between hover:bg-slate-50 transition-colors text-left" onclick="populateAssistantPrompt('Review the Robotic Simon Says interactive warmup rule set.')">
+<div>
+<p class="font-semibold text-slate-800 text-[13px]">Interactive Simon Says setup</p>
+<p class="text-[11px] text-slate-400 mt-0.5">Oct 24, 2025 • 1 exchange</p>
+</div>
+<span class="material-symbols-outlined text-[18px] text-slate-400">chevron_right</span>
+</button>
+</div>
+</section>
+</main>
+<!-- ===================================================================== -->
+<!-- 4. DOCKED AGENTYETU ASSISTANT CHAT SIDEBAR (Exact Thread as IMAGE_4) -->
+<!-- ===================================================================== -->
+<aside class="w-[360px] bg-white border-l border-slate-200 flex flex-col shrink-0 h-full select-none z-10">
+<!-- Assistant Header (Matching IMAGE_4) -->
+<div class="px-4 py-3 border-b border-slate-200 flex items-center justify-between bg-white shrink-0">
+<div class="flex items-center gap-2.5">
+<div class="w-9 h-9 rounded-full bg-brand-blue flex items-center justify-center text-white shadow-xs">
+<span class="material-symbols-outlined text-[20px]">school</span>
+</div>
+<div>
+<div class="flex items-center gap-1.5">
+<h3 class="text-sm font-bold text-slate-900 leading-tight">AgentYetu Assistant</h3>
+</div>
+<div class="flex items-center gap-1 text-[11px] text-slate-500 font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+<span>Always active • Expert Teaching Guide</span>
+</div>
+</div>
+</div>
+<!-- Action Icons (Bookmark & Refresh from screenshot) -->
+<div class="flex items-center gap-1 text-slate-400">
+<button class="p-1 hover:text-slate-600 rounded" title="Bookmark conversation">
+<span class="material-symbols-outlined text-[18px]">bookmark_border</span>
+</button>
+<button class="p-1 hover:text-slate-600 rounded" title="Refresh conversation">
+<span class="material-symbols-outlined text-[18px]">cached</span>
+</button>
+</div>
+</div>
+<!-- Horizontal Prompt Pill Badges (Matching screenshot top tags) -->
+<div class="px-3 py-2 bg-slate-50 border-b border-slate-200 flex gap-2 overflow-x-auto no-scrollbar shrink-0 text-xs">
+<button class="shrink-0 px-2.5 py-1 rounded-lg bg-white border border-slate-200 hover:border-slate-300 text-slate-700 font-medium flex items-center gap-1 shadow-xs hover:bg-slate-100 transition-colors" onclick="insertPrompt('Lesson Plan Generator: ')">
+<span>📝</span> Lesson Plan
+          </button>
+<button class="shrink-0 px-2.5 py-1 rounded-lg bg-white border border-slate-200 hover:border-slate-300 text-slate-700 font-medium flex items-center gap-1 shadow-xs hover:bg-slate-100 transition-colors" onclick="insertPrompt('Curriculum Alignment check: ')">
+<span>🎯</span> Curriculum Align
+          </button>
+<button class="shrink-0 px-2.5 py-1 rounded-lg bg-white border border-slate-200 hover:border-slate-300 text-slate-700 font-medium flex items-center gap-1 shadow-xs hover:bg-slate-100 transition-colors" onclick="insertPrompt('Session Warmup Game: ')">
+<span>🎮</span> Warmup Game
+          </button>
+</div>
+<!-- Scrollable Chat Conversation Body (Exact Thread from IMAGE_4) -->
+<div class="flex-1 overflow-y-auto custom-scrollbar p-3.5 space-y-4 text-xs" id="dockedChatContainer">
+<!-- Message 1: User Prompt -->
+<div class="flex justify-end">
+<div class="max-w-[88%] bg-brand-blue text-white rounded-2xl rounded-tr-none px-3.5 py-2.5 shadow-xs">
+<p class="text-[12.5px] leading-relaxed">Help me prepare a lesson plan for teaching Python loops to beginners.</p>
+<span class="block text-[10px] text-blue-200 text-right mt-1 font-medium">04:12 PM</span>
+</div>
+</div>
+<!-- Message 2: Assistant Response with Lesson Plan Breakdown -->
+<div class="flex gap-2 items-start max-w-[96%]">
+<div class="w-6 h-6 rounded-full bg-brand-blue flex items-center justify-center text-white shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[14px]">school</span>
+</div>
+<div class="bg-slate-100/90 border border-slate-200 rounded-2xl rounded-tl-none p-3 text-slate-800 space-y-2 shadow-xs flex-1">
+<div class="flex items-center justify-between text-[10.5px]">
+<span class="font-bold uppercase tracking-wider text-brand-blue">AgentYetu Teaching Assistant</span>
+<span class="text-slate-400">04:13 PM</span>
+</div>
+<p class="text-[12px] text-slate-700">Here is a highly interactive 50-minute lesson plan for beginner loop concepts:</p>
+<!-- Structured Lesson Card -->
+<div class="bg-white border border-slate-200 rounded-xl p-3 space-y-2">
+<div>
+<h4 class="font-bold text-slate-900 text-xs text-brand-blue">Python Loops Lesson: "Repeat Without Repeating"</h4>
+<div class="mt-1 text-[11px] text-slate-600">
+<span class="font-bold uppercase text-[10px] text-slate-400 block tracking-wider">Core Objective</span>
+                    Students will conceptualize why loops are useful and write their first `for` loop to repeat simple actions.
+                  </div>
+</div>
+<div class="border-t border-slate-100 pt-2 space-y-2 text-[11px]">
+<span class="font-bold uppercase text-[10px] text-slate-400 block tracking-wider">Timeline Breakdown</span>
+<div class="flex items-start gap-2">
+<span class="font-bold text-brand-blue shrink-0 w-12">05 Min</span>
+<div>
+<strong class="text-slate-800">The Human Loop Warmup</strong>
+<p class="text-slate-500 text-[10.5px]">Instruct a student to clap 5 times, highlighting how tedious it is to give instructions one by one.</p>
+</div>
+</div>
+<div class="flex items-start gap-2">
+<span class="font-bold text-brand-blue shrink-0 w-12">15 Min</span>
+<div>
+<strong class="text-slate-800">Live Coding: Python 'for' Syntax</strong>
+<p class="text-slate-500 text-[10.5px]">Demonstrate iterating through a list of names. Introduce the range() function.</p>
+</div>
+</div>
+<div class="flex items-start gap-2">
+<span class="font-bold text-brand-blue shrink-0 w-12">30 Min</span>
+<div>
+<strong class="text-slate-800">Hands-on Project &amp; Lab</strong>
+<p class="text-slate-500 text-[10.5px]">Students build a "Star Pattern Generator" outputting cool patterns using loops.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Message 3: User Follow-up Query -->
+<div class="flex justify-end">
+<div class="max-w-[88%] bg-brand-blue text-white rounded-2xl rounded-tr-none px-3.5 py-2.5 shadow-xs">
+<p class="text-[12.5px] leading-relaxed">Any ideas for a fun interactive game to explain this?</p>
+<span class="block text-[10px] text-blue-200 text-right mt-1 font-medium">04:14 PM</span>
+</div>
+</div>
+<!-- Message 4: Assistant Game Suggestion -->
+<div class="flex gap-2 items-start max-w-[96%]">
+<div class="w-6 h-6 rounded-full bg-brand-blue flex items-center justify-center text-white shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[14px]">school</span>
+</div>
+<div class="bg-slate-100/90 border border-slate-200 rounded-2xl rounded-tl-none p-3 text-slate-800 space-y-2 shadow-xs flex-1">
+<div class="flex items-center justify-between text-[10.5px]">
+<span class="font-bold uppercase tracking-wider text-brand-blue">AgentYetu Teaching Assistant</span>
+<span class="text-slate-400">04:15 PM</span>
+</div>
+<p class="text-[12px] text-slate-700">Absolutely! Try the <strong>"**Robotic Instructions**"</strong> game:</p>
+<!-- Game Rule Card -->
+<div class="bg-white border border-slate-200 rounded-xl p-3 space-y-2 text-[11px] leading-relaxed">
+<h5 class="font-bold text-slate-900 text-xs">Game: Robotic Simon Says</h5>
+<ol class="list-decimal pl-4 space-y-1.5 text-slate-600">
+<li>One student acts as the "Robot", executing actions.</li>
+<li>
+                    The class must give commands in a structured Loop block: e.g.,<br/>
+<code class="block font-mono text-[11px] text-brand-blue bg-blue-50/80 p-1.5 rounded mt-1 font-semibold border border-blue-100">FOR step IN range(5): step_forward()</code>
+</li>
+<li>If they forget to define the range or command sequence, the Robot does nothing! This beautifully demonstrates syntax logic visually.</li>
+</ol>
+</div>
+</div>
+</div>
+</div>
+<!-- Assistant Bottom Input Dock (Matching original screenshot) -->
+<div class="p-3 border-t border-slate-200 bg-white shrink-0">
+<form class="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-full px-3 py-1.5 focus-within:ring-2 focus-within:ring-brand-blue/30 focus-within:border-brand-blue transition-all" onsubmit="handleAssistantChat(event)">
+<!-- Paperclip attachment button -->
+<button class="text-slate-400 hover:text-slate-600 transition-colors p-0.5" title="Attach file" type="button">
+<span class="material-symbols-outlined text-[18px]">attach_file</span>
+</button>
+<!-- Text Input -->
+<input class="flex-1 bg-transparent border-0 p-0 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-0" id="assistantInput" placeholder="Ask about curriculum, lesson plans, or teaching strategies..." type="text"/>
+<!-- Send Button -->
+<button class="w-7 h-7 rounded-full bg-brand-blue text-white flex items-center justify-center shrink-0 shadow-xs hover:bg-blue-600 active:scale-95 transition-all" title="Send message" type="submit">
+<span class="material-symbols-outlined text-[15px]">send</span>
+</button>
+</form>
+</div>
+</aside>
+</div>
+</div>
+<!-- Interactive JavaScript -->
+<script>
+    function populateAssistantPrompt(promptText) {
+      const input = document.getElementById('assistantInput');
+      input.value = promptText;
+      input.focus();
+    }
+
+    function insertPrompt(prefix) {
+      const input = document.getElementById('assistantInput');
+      input.value = prefix;
+      input.focus();
+    }
+
+    function handleAssistantChat(event) {
+      event.preventDefault();
+      const input = document.getElementById('assistantInput');
+      const text = input.value.trim();
+      if (!text) return;
+
+      const container = document.getElementById('dockedChatContainer');
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+      // Append user bubble
+      const userBubble = document.createElement('div');
+      userBubble.className = 'flex justify-end';
+      userBubble.innerHTML = `
+        <div class="max-w-[88%] bg-brand-blue text-white rounded-2xl rounded-tr-none px-3.5 py-2.5 shadow-xs">
+          <p class="text-[12.5px] leading-relaxed">${escapeHtml(text)}</p>
+          <span class="block text-[10px] text-blue-200 text-right mt-1 font-medium">${timeStr}</span>
+        </div>
+      `;
+      container.appendChild(userBubble);
+      input.value = '';
+      container.scrollTop = container.scrollHeight;
+
+      // Simulated instant assistant response
+      setTimeout(() => {
+        const assistantBubble = document.createElement('div');
+        assistantBubble.className = 'flex gap-2 items-start max-w-[96%]';
+        assistantBubble.innerHTML = `
+          <div class="w-6 h-6 rounded-full bg-brand-blue flex items-center justify-center text-white shrink-0 mt-0.5">
+            <span class="material-symbols-outlined text-[14px]">school</span>
+          </div>
+          <div class="bg-slate-100/90 border border-slate-200 rounded-2xl rounded-tl-none p-3 text-slate-800 space-y-2 shadow-xs flex-1">
+            <div class="flex items-center justify-between text-[10.5px]">
+              <span class="font-bold uppercase tracking-wider text-brand-blue">AgentYetu Teaching Assistant</span>
+              <span class="text-slate-400">Just now</span>
+            </div>
+            <p class="text-[12px] text-slate-700">Great question! Here is a focused resource tailored for <strong>"${escapeHtml(text)}"</strong>:</p>
+            <div class="bg-white border border-emerald-200 rounded-xl p-2.5 text-[11px] text-emerald-800">
+              ✓ Ready! Instant lesson blueprint &amp; rubrics generated. You can download or export this anytime to your classroom board.
+            </div>
+          </div>
+        `;
+        container.appendChild(assistantBubble);
+        container.scrollTop = container.scrollHeight;
+      }, 600);
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+  </script>
+</body></html>
