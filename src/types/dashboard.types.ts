@@ -121,6 +121,11 @@ export interface UpcomingSessionsProps {
   scheduleHref?: string;
   /** Sessions render 3-up in a wide column, 1-up when stacked beside chat. */
   columns?: 1 | 2 | 3;
+  /**
+   * "Get Ready for This Session" click — receives the prep prompt built from
+   * that card's session, to push into the assistant composer.
+   */
+  onPrepareSession: (prompt: string) => void;
 }
 
 /* ------------------------------------------------------------------ */
@@ -140,6 +145,59 @@ export interface RecentChatsProps {
   chats: RecentChat[];
   isLoading?: boolean;
   onChatSelect: (prompt: string) => void;
+}
+
+/* ------------------------------------------------------------------ */
+/* Resizable split between main content and the chat dock              */
+/* ------------------------------------------------------------------ */
+
+export interface ResizablePanelOptions {
+  /** The row holding the main column + the panel; bounds the drag range. */
+  containerRef: React.RefObject<HTMLElement | null>;
+  /** Width on first render when nothing is persisted. Also the reset target. */
+  initialWidth?: number;
+  /** Narrowest the panel may get, in px. */
+  minWidth?: number;
+  /** Widest the panel may get, in px, before the container cap applies. */
+  maxWidth?: number;
+  /** Space the main column always keeps, in px. */
+  minContentWidth?: number;
+  /** Arrow-key increment, in px. */
+  step?: number;
+  /** localStorage key for the chosen width. Omit to skip persistence. */
+  storageKey?: string;
+  /** Accessible name for the separator. */
+  label?: string;
+}
+
+/** ARIA + event bindings spread onto the drag handle by `ResizeHandle`. */
+export interface ResizeHandleBindings {
+  role: 'separator';
+  'aria-orientation': 'vertical';
+  'aria-valuenow': number;
+  'aria-valuemin': number;
+  'aria-valuemax': number;
+  'aria-label': string;
+  tabIndex: number;
+  onPointerDown: (event: React.PointerEvent<HTMLElement>) => void;
+  onKeyDown: (event: React.KeyboardEvent<HTMLElement>) => void;
+  onDoubleClick: () => void;
+}
+
+export interface ResizablePanel {
+  /** Current panel width in px; apply as an inline style. */
+  width: number;
+  /** True for the duration of a drag gesture. */
+  isResizing: boolean;
+  handleProps: ResizeHandleBindings;
+  /** Snap back to `initialWidth`. */
+  reset: () => void;
+}
+
+export interface ResizeHandleProps {
+  bindings: ResizeHandleBindings;
+  isResizing?: boolean;
+  className?: string;
 }
 
 /* ------------------------------------------------------------------ */
@@ -179,13 +237,6 @@ export interface ChatMessage {
   blocks: ChatBlock[];
 }
 
-export interface QuickPrompt {
-  id: string;
-  emoji: string;
-  label: string;
-  prefix: string;
-}
-
 export interface ChatPanelProps {
   messages: ChatMessage[];
   /** Controlled composer value, driven by tool/recent-chat clicks. */
@@ -195,11 +246,12 @@ export interface ChatPanelProps {
   /** True between sending a message and the assistant reply arriving. */
   isResponding?: boolean;
   isLoading?: boolean;
-  quickPrompts?: QuickPrompt[];
   onBookmark?: () => void;
   onRefresh?: () => void;
   assistantName?: string;
   assistantStatus?: string;
+  /** Drag-resized width in px. Falls back to the default dock width if unset. */
+  width?: number;
 }
 
 export interface ChatBubbleProps {

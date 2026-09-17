@@ -24,3 +24,10 @@
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+/* Applied to <body> for the duration of a panel drag: keeps the resize cursor
+   and stops the pointer from selecting text across the layout. */
+body.is-resizing {
+  cursor: col-resize;
+  user-select: none;
+}

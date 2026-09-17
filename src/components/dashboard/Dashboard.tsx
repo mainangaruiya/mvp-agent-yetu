@@ -1,11 +1,13 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { logo } from '../../assets/logo';
 import { useDashboardData } from '../../hooks/useDashboardData';
+import { useResizablePanel } from '../../hooks/useResizablePanel';
 import { Sidebar } from './Sidebar';
 import { Header } from './Header';
 import { QuickActionsPanel } from './QuickActionsPanel';
 import { UpcomingSessions } from './UpcomingSessions';
 import { RecentChats } from './RecentChats';
+import { ResizeHandle } from './ResizeHandle';
 import { ChatPanel } from './ChatPanel';
 import type { DashboardProps } from '../../types/dashboard.types';
 
@@ -13,16 +15,18 @@ import type { DashboardProps } from '../../types/dashboard.types';
  * Top-level layout container. This is the only file that assembles the full
  * dashboard:
  *
- *   ┌──────────┬────────────────────────────────────────┬────────────┐
- *   │ Sidebar  │ Header                                 │            │
- *   │ (240px)  ├────────────────────────────────────────┤ ChatPanel  │
- *   │          │ QuickActionsPanel  (primary content)   │ (340-380px)│
- *   │          │ UpcomingSessions / RecentChats         │  docked    │
- *   └──────────┴────────────────────────────────────────┴────────────┘
+ *   ┌──────────┬───────────────────────────────────┬╌┬────────────┐
+ *   │ Sidebar  │ Header                            │ │            │
+ *   │ (240px)  ├───────────────────────────────────┤ │ ChatPanel  │
+ *   │          │ QuickActionsPanel (primary)       │ │ (resizable)│
+ *   │          │ UpcomingSessions / RecentChats    │ │  docked    │
+ *   └──────────┴───────────────────────────────────┴╌┴────────────┘
+ *                                        drag handle ┘
  *
  * All backend data arrives via `useDashboardData()` — see that hook for the
- * integration stubs. Only the composer draft is local UI state, so that tool
- * cards and recent-chat rows on the left can prefill the composer on the right.
+ * integration stubs. The local UI state is the composer draft (so tool cards
+ * and recent-chat rows on the left can prefill the composer on the right) and
+ * the chat dock's width, owned by `useResizablePanel`.
  */
 export function Dashboard({ data }: DashboardProps) {
   const loaded = useDashboardData();
@@ -39,6 +43,17 @@ export function Dashboard({ data }: DashboardProps) {
   } = data ?? loaded;
 
   const [draft, setDraft] = useState('');
+
+  const splitRef = useRef<HTMLDivElement>(null);
+  const chatPanel = useResizablePanel({
+    containerRef: splitRef,
+    initialWidth: 380,
+    minWidth: 320,
+    maxWidth: 820,
+    minContentWidth: 460,
+    storageKey: 'agentyetu:chat-width',
+    label: 'Resize assistant panel',
+  });
 
   /** Tool card / recent chat click → prefill the assistant composer. */
   const handlePromptSelect = useCallback((prompt: string) => {
@@ -69,7 +84,7 @@ export function Dashboard({ data }: DashboardProps) {
         <Header profile={profile} />
 
         {/* 3. Expanded main content + 4. docked assistant chat */}
-        <div className="flex-1 flex overflow-hidden min-w-0">
+        <div className="flex-1 flex overflow-hidden min-w-0" ref={splitRef}>
           <main className="flex-1 overflow-y-auto custom-scrollbar p-6 bg-slate-50 space-y-7 min-w-0">
             {error && (
               <div
@@ -89,6 +104,7 @@ export function Dashboard({ data }: DashboardProps) {
                 <UpcomingSessions
                   columns={2}
                   isLoading={isLoading}
+                  onPrepareSession={handlePromptSelect}
                   sessions={sessions}
                 />
               </div>
@@ -102,6 +118,11 @@ export function Dashboard({ data }: DashboardProps) {
             </div>
           </main>
 
+          <ResizeHandle
+            bindings={chatPanel.handleProps}
+            isResizing={chatPanel.isResizing}
+          />
+
           <ChatPanel
             draft={draft}
             isLoading={isLoading}
@@ -110,6 +131,7 @@ export function Dashboard({ data }: DashboardProps) {
             onDraftChange={setDraft}
             onRefresh={handleRefresh}
             onSend={handleSend}
+            width={chatPanel.width}
           />
         </div>
       </div>

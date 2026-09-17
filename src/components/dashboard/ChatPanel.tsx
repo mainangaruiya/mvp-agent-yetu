@@ -6,16 +6,7 @@ import type {
   ChatBlock,
   ChatBubbleProps,
   ChatPanelProps,
-  QuickPrompt,
 } from '../../types/dashboard.types';
-
-/** One pill per instant classroom tool, in the same order as `CLASSROOM_TOOLS`. */
-export const QUICK_PROMPTS: QuickPrompt[] = [
-  { id: 'lesson-plan', emoji: '📝', label: 'Lesson Plan', prefix: 'Lesson Plan Generator: ' },
-  { id: 'next-lesson', emoji: '⏭️', label: 'Next Lesson', prefix: 'Prepare for next lesson: ' },
-  { id: 'homework-quiz', emoji: '✅', label: 'Homework Quiz', prefix: 'Generate a homework quiz: ' },
-  { id: 'curriculum', emoji: '🎯', label: 'Curriculum', prefix: 'Review curriculum: ' },
-];
 
 function Block({ block }: { block: ChatBlock }) {
   switch (block.kind) {
@@ -178,9 +169,10 @@ function TypingIndicator() {
 }
 
 /**
- * Compact assistant chat, docked to the right edge at 340px (380px on very
- * wide screens). Header + prompt pills + input dock stay fixed; only the
- * conversation body scrolls.
+ * Assistant chat, docked to the right edge. `width` is supplied by the drag
+ * handle in `Dashboard`; without it the panel falls back to its static 340px
+ * (380px on very wide screens) dock width. Header + input dock stay fixed;
+ * only the conversation body scrolls.
  */
 export function ChatPanel({
   messages,
@@ -189,11 +181,11 @@ export function ChatPanel({
   onSend,
   isResponding = false,
   isLoading = false,
-  quickPrompts = QUICK_PROMPTS,
   onBookmark,
   onRefresh,
   assistantName = 'AgentYetu Assistant',
   assistantStatus = 'Always active • Expert Teaching Guide',
+  width,
 }: ChatPanelProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -211,13 +203,13 @@ export function ChatPanel({
     onSend(text);
   };
 
-  const handleQuickPrompt = (prefix: string) => {
-    onDraftChange(prefix);
-    inputRef.current?.focus();
-  };
-
   return (
-    <aside className="w-[340px] 2xl:w-[380px] min-w-[320px] bg-white border-l border-slate-200 flex flex-col shrink-0 h-full select-none z-10">
+    <aside
+      className={`${
+        width === undefined ? 'w-[340px] 2xl:w-[380px]' : ''
+      } min-w-[280px] bg-white border-l border-slate-200 flex flex-col shrink-0 h-full select-none z-10`}
+      style={width === undefined ? undefined : { width }}
+    >
       {/* Assistant header */}
       <div className="px-4 py-3 border-b border-slate-200 flex items-center justify-between bg-white shrink-0">
         <div className="flex items-center gap-2.5 min-w-0">
@@ -247,19 +239,6 @@ export function ChatPanel({
             <RotateCcw className="w-[18px] h-[18px]" />
           </Button>
         </div>
-      </div>
-
-      {/* Horizontal prompt pill badges */}
-      <div className="px-3 py-2 bg-slate-50 border-b border-slate-200 flex gap-2 overflow-x-auto no-scrollbar shrink-0 text-xs">
-        {quickPrompts.map((prompt) => (
-          <Button
-            key={prompt.id}
-            onClick={() => handleQuickPrompt(prompt.prefix)}
-            variant="pill"
-          >
-            <span>{prompt.emoji}</span> {prompt.label}
-          </Button>
-        ))}
       </div>
 
       {/* Scrollable conversation body */}

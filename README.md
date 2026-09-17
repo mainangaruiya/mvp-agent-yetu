@@ -2,7 +2,8 @@
 
 Instructor-facing dashboard for CodeYetu, built around the **AgentYetu** teaching
 assistant. Instant Classroom Tools occupy the primary content area; the assistant
-chat is docked as a compact panel on the right edge.
+chat is docked on the right edge, and the split between the two is drag-resizable
+(double-click the gutter to reset).
 
 Refactored from a single-file HTML prototype (`code.txt`) into a modular
 React + TypeScript app.
@@ -44,16 +45,33 @@ npm run dev        # http://localhost:5173
 ## Layout
 
 ```
-┌──────────┬────────────────────────────────────────┬────────────┐
-│ Sidebar  │ Header                                 │            │
-│ (240px)  ├────────────────────────────────────────┤ ChatPanel  │
-│          │ QuickActionsPanel  (primary content)   │ (340-380px)│
-│          │ UpcomingSessions  │  RecentChats       │   docked   │
-└──────────┴────────────────────────────────────────┴────────────┘
+┌──────────┬───────────────────────────────────┬╌┬────────────┐
+│ Sidebar  │ Header                            │ │            │
+│ (240px)  ├───────────────────────────────────┤ │ ChatPanel  │
+│          │ QuickActionsPanel (primary)       │ │ (resizable)│
+│          │ UpcomingSessions │ RecentChats    │ │   docked   │
+└──────────┴───────────────────────────────────┴╌┴────────────┘
+                                    drag handle ┘
 ```
 
 Only two regions scroll: the main content column and the chat message body.
 Everything else is pinned via `shrink-0`.
+
+### Resizing the chat dock
+
+`useResizablePanel` owns the dock width; `ResizeHandle` is the gutter between
+the two columns. Drag it to trade space between the tools grid and the chat.
+
+| Gesture | Effect |
+|---|---|
+| Drag left / right | Widen / narrow the chat panel |
+| Double-click, or <kbd>Enter</kbd> | Reset to the 380px default |
+| <kbd>←</kbd> / <kbd>→</kbd> (handle focused) | Nudge by 24px |
+| <kbd>Home</kbd> / <kbd>End</kbd> | Jump to widest / narrowest |
+
+The width is clamped to 320–820px and additionally capped so the main column
+never drops below 460px — a `ResizeObserver` re-clamps when the window shrinks.
+The chosen width persists in `localStorage` under `agentyetu:chat-width`.
 
 ---
 
@@ -72,7 +90,8 @@ src/
 │   └── dashboard.types.ts          All shared interfaces and prop types
 │
 ├── hooks/
-│   └── useDashboardData.ts         ⚠ INTEGRATION POINT — all API stubs
+│   ├── useDashboardData.ts         ⚠ INTEGRATION POINT — all API stubs
+│   └── useResizablePanel.ts        Drag-to-resize width for the chat dock
 │
 └── components/
     ├── dashboard/
@@ -80,6 +99,7 @@ src/
     │   ├── Sidebar.tsx             Left navigation
     │   ├── Header.tsx              Top header bar
     │   ├── QuickActionsPanel.tsx   "Instant Classroom Tools" grid
+    │   ├── ResizeHandle.tsx        Drag gutter between content and chat
     │   ├── ChatPanel.tsx           Docked AgentYetu assistant chat
     │   ├── UpcomingSessions.tsx    "Your Upcoming Sessions"
     │   └── RecentChats.tsx         "Recent Assist Chats"

@@ -1,7 +1,8 @@
-import { CalendarOff, Clock, Users } from 'lucide-react';
+import { CalendarClock, CalendarOff, Clock, Users } from 'lucide-react';
 import { Card } from '../ui/Card';
 import type {
   SessionStatus,
+  UpcomingSession,
   UpcomingSessionsProps,
 } from '../../types/dashboard.types';
 
@@ -26,6 +27,15 @@ const COLUMN_CLASS: Record<NonNullable<UpcomingSessionsProps['columns']>, string
   3: 'grid-cols-1 md:grid-cols-3',
 };
 
+/** Prep prompt pushed into the assistant composer for a specific session. */
+export function buildPrepPrompt(session: UpcomingSession) {
+  return (
+    `Prepare me for my "${session.title}" session (${session.module}) at ${session.time} ` +
+    `with ${session.studentCount} students: recap what the class covered, list the ` +
+    `materials I need, and suggest a warmup.`
+  );
+}
+
 function SessionSkeleton() {
   return (
     <Card className="border-slate-200/80 animate-pulse" padding="sm">
@@ -38,6 +48,7 @@ function SessionSkeleton() {
         <div className="h-3 w-24 rounded bg-slate-100" />
         <div className="h-3 w-16 rounded bg-slate-100" />
       </div>
+      <div className="mt-2.5 h-8 w-full rounded-lg bg-slate-100" />
     </Card>
   );
 }
@@ -63,6 +74,7 @@ export function UpcomingSessions({
   isLoading = false,
   scheduleHref = '#view-calendar',
   columns = 3,
+  onPrepareSession,
 }: UpcomingSessionsProps) {
   return (
     <section className="space-y-3">
@@ -124,15 +136,26 @@ export function UpcomingSessions({
                   </h4>
                 </div>
 
-                <div className="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
-                  <span className="flex items-center gap-1">
-                    <Clock className="w-[15px] h-[15px] text-slate-400" />
-                    {session.time}
-                  </span>
-                  <span className="flex items-center gap-1 font-medium">
-                    <Users className="w-[15px] h-[15px] text-slate-400" />
-                    {session.studentCount} students
-                  </span>
+                <div>
+                  <div className="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+                    <span className="flex items-center gap-1">
+                      <Clock className="w-[15px] h-[15px] text-slate-400" />
+                      {session.time}
+                    </span>
+                    <span className="flex items-center gap-1 font-medium">
+                      <Users className="w-[15px] h-[15px] text-slate-400" />
+                      {session.studentCount} students
+                    </span>
+                  </div>
+
+                  <button
+                    className="mt-2.5 w-full inline-flex items-center justify-center gap-1.5 rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-xs font-semibold text-brand-blue hover:bg-blue-100 hover:border-blue-300 active:scale-[0.99] transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue/40"
+                    onClick={() => onPrepareSession(buildPrepPrompt(session))}
+                    type="button"
+                  >
+                    <CalendarClock className="w-[15px] h-[15px]" />
+                    Get Ready for This Session
+                  </button>
                 </div>
               </Card>
             );
